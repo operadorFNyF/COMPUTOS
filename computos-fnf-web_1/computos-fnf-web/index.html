@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#005091">
+<title>Cómputos · Fuerza Neuquina y Federal</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/logo-192.png">
+<link rel="apple-touch-icon" href="icons/maskable-192.png">
+<style>
+:root{--azul:#005091;--azul2:#003a6b;--azul-claro:#e6eef6;--gris:#b5b5b5;--bg:#f3f4f6;--card:#fff;--ink:#111418;--mut:#5f6670;--line:#e1e4e8;--ok:#1e7b4a;--warn:#a85b00;--err:#b42318}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1116;--card:#171b21;--ink:#eef1f4;--mut:#9aa3ad;--line:#2a3038;--azul-claro:#13263a;--ok:#4cc38a;--warn:#f0a35c;--err:#ff6b6b}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+.hidden{display:none!important}
+/* login */
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(160deg,var(--azul) 0%,var(--azul2) 60%,#0b0f14 100%)}
+.login-box{background:var(--card);border-radius:20px;padding:28px 24px;max-width:360px;width:100%;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.login-box img{width:120px;height:120px;margin:-80px auto 8px;display:block;filter:drop-shadow(0 6px 16px rgba(0,0,0,.35))}
+.login-box h1{font-size:22px;margin:4px 0 0;letter-spacing:.5px}
+.login-box .sub{color:var(--mut);font-size:13px;margin-bottom:12px}
+/* layout */
+header.top{background:var(--azul);color:#fff;padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
+header.top img{width:40px;height:40px}
+header.top .t{flex:1;min-width:0}
+header.top b{display:block;font-size:16px;letter-spacing:.3px}
+header.top small{opacity:.85;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+header.top button{background:rgba(255,255,255,.15);color:#fff;border:0;border-radius:8px;padding:7px 10px;font:inherit;font-size:13px;cursor:pointer}
+nav.tabs{display:flex;gap:4px;overflow-x:auto;background:var(--card);border-bottom:1px solid var(--line);padding:6px 10px;position:sticky;top:60px;z-index:9}
+nav.tabs button{border:0;background:none;color:var(--mut);padding:9px 12px;border-radius:8px;font:inherit;font-weight:600;white-space:nowrap;cursor:pointer}
+nav.tabs button.on{background:var(--azul-claro);color:var(--azul)}
+@media (prefers-color-scheme:dark){nav.tabs button.on{color:#8dbbe8}}
+main{max-width:860px;margin:auto;padding:12px 14px 80px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0}
+.card h2{font-size:16px;margin:0 0 8px}
+label{display:block;font-size:13px;color:var(--mut);margin:10px 0 4px}
+input,select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit}
+input:focus,select:focus{outline:2px solid var(--azul);outline-offset:-1px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{border:0;background:var(--azul);color:#fff;padding:12px 16px;border-radius:10px;font:inherit;font-weight:700;cursor:pointer}
+.btn.full{width:100%;margin-top:16px}
+.btn.sec{background:var(--azul-claro);color:var(--azul)}
+.btn.sm{padding:6px 10px;font-size:13px;font-weight:600}
+.btn.danger{background:none;color:var(--err)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.msg{font-size:13px;margin-top:8px;min-height:18px}
+.ok{color:var(--ok)}.warn{color:var(--warn)}.err{color:var(--err)}
+.muted{color:var(--mut);font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:9px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{color:var(--mut);font-weight:500;font-size:12px}
+.n{text-align:right;font-variant-numeric:tabular-nums}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.kpi b{display:block;font-size:26px;font-variant-numeric:tabular-nums;color:var(--azul)}
+@media (prefers-color-scheme:dark){.kpi b{color:#8dbbe8}}
+.kpi span{font-size:12px;color:var(--mut)}
+.meta{margin:10px 0 2px;display:flex;justify-content:space-between;font-size:14px}
+.bar{height:10px;background:var(--azul-claro);border-radius:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--azul);border-radius:6px}
+.bar i.done{background:var(--ok)}
+.chip{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;background:var(--azul-claro);color:var(--azul);font-weight:600}
+.chip.sin{background:#fdecea;color:var(--err)}
+.demo{background:#fff4d6;color:#6b4a00;font-size:13px;padding:8px 12px;text-align:center}
+@media (prefers-color-scheme:dark){.demo{background:#3a2d0d;color:#f3cf7a}}
+.demo select{width:auto;padding:4px 8px;margin-left:6px;font-size:13px}
+.search{display:flex;gap:8px}.search input{flex:1}
+.list-item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--line)}
+.list-item:last-child{border:0}
+.list-item .who{min-width:0}
+.list-item .who b{display:block}
+.list-item .who span{font-size:12px;color:var(--mut)}
+.dni-box{display:flex;gap:8px}.dni-box input{font-size:24px;font-weight:700;letter-spacing:2px;text-align:center;padding:14px}
+.dni-box .btn{font-size:16px;padding:0 18px}
+.ficha{border:2px solid var(--line);border-radius:14px;padding:14px;margin-top:14px}
+.ficha.f-ok{border-color:var(--azul)}.ficha.f-mal{border-color:var(--err)}.ficha.f-ya{border-color:var(--warn)}
+.ficha h3{margin:0 0 2px;font-size:19px}
+.ficha .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;margin-top:10px}
+.ficha .grid div span{display:block;font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.4px}
+.ficha .grid div b{font-size:15px;font-weight:600}
+.estado{font-size:14px;font-weight:700;margin-top:10px}
+.mapa{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}
+.charts{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.donut{text-align:center}.donut svg{width:120px;height:120px}.donut b{display:block;font-size:14px;margin-top:4px}.donut span{font-size:12px;color:var(--mut)}
+.leg{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--mut);margin:6px 0}.leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+svg text{fill:var(--mut);font-size:11px}
+.filtros{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+.acciones{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+#printArea{display:none}
+@media print{
+  body{background:#fff;color:#000}
+  body > *:not(#printArea){display:none!important}
+  #printArea{display:block!important;font:11px/1.35 system-ui,sans-serif}
+  #printArea .ph{display:flex;align-items:center;gap:12px;border-bottom:2px solid #005091;padding-bottom:8px;margin-bottom:8px}
+  #printArea .ph img{width:56px;height:56px}
+  #printArea h1{font-size:16px;margin:0;color:#005091}
+  #printArea table{width:100%;border-collapse:collapse}
+  #printArea th,#printArea td{border-bottom:1px solid #ccc;padding:4px 5px;text-align:left;font-size:10.5px}
+  #printArea th{background:#e6eef6;color:#003a6b}
+  #printArea tr{page-break-inside:avoid}
+  #printArea .grupo td{background:#f3f4f6;font-weight:700;border-top:1px solid #999}
+  @page{size:A4;margin:12mm}
+}
+.orden-box input{font-size:40px;font-weight:800;text-align:center;padding:14px;letter-spacing:2px}
+.btn.voto{font-size:22px;padding:18px;background:var(--ok)}
+.resultado{font-size:18px;font-weight:700;text-align:center;padding:12px;border-radius:12px;margin-top:12px}
+.resultado.r-ok{background:#e3f4ea;color:#155c37}.resultado.r-mal{background:#fdecea;color:#8a1c12}.resultado.r-ya{background:#fff4d6;color:#6b4a00}
+@media (prefers-color-scheme:dark){.resultado.r-ok{background:#12301f;color:#7fe0aa}.resultado.r-mal{background:#3a1512;color:#ff9b91}.resultado.r-ya{background:#3a2d0d;color:#f3cf7a}}
+.contador{text-align:center}.contador b{font-size:34px;color:var(--azul);font-variant-numeric:tabular-nums}
+@media (prefers-color-scheme:dark){.contador b{color:#8dbbe8}}
+.pend{background:#fff4d6;color:#6b4a00;padding:8px 12px;border-radius:10px;font-size:13px;margin-top:10px}
+#dlg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
+#dlg .card{max-width:380px;width:100%}
+#dlg .acts{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+</style>
+</head>
+<body>
+
+<div id="demoBar" class="demo hidden">MODO DEMO · datos de prueba · ver como:
+  <select id="demoRol">
+    <option value="operario">Operario de Cómputos</option>
+    <option value="ref_localidad">Referente de localidad</option>
+    <option value="ref_territorial">Referente territorial</option>
+    <option value="fiscal">Fiscal</option>
+  </select><br>Probá DNI 30000001, 30000008, 30000015 (Rincón) · Fiscal: mesa 1000 a 1009, orden 1 a 57
+</div>
+
+<!-- LOGIN -->
+<section id="login" class="hidden">
+  <form class="login-box" id="loginForm">
+    <img src="icons/logo-512.png" alt="Fuerza Neuquina y Federal">
+    <h1>CÓMPUTOS</h1>
+    <div class="sub">Fuerza Neuquina y Federal</div>
+    <label for="lEmail">Usuario (mail)</label>
+    <input id="lEmail" type="email" autocomplete="username" required>
+    <label for="lPass">Contraseña</label>
+    <input id="lPass" type="password" autocomplete="current-password" required>
+    <button class="btn full" type="submit">Ingresar</button>
+    <div id="loginMsg" class="msg err"></div>
+  </form>
+</section>
+
+<!-- APP -->
+<section id="app" class="hidden">
+  <header class="top">
+    <img src="icons/logo-192.png" alt="">
+    <div class="t"><b>CÓMPUTOS</b><small id="quien"></small></div>
+    <button id="btnSalir">Salir</button>
+  </header>
+  <nav class="tabs" id="tabs"></nav>
+  <main>
+    <div id="sinRol" class="card hidden"><h2>Usuario sin habilitar</h2><p class="muted">Tu usuario todavía no tiene un rol asignado. Pedile al equipo de Cómputos que te habilite.</p></div>
+
+    <!-- CARGAR -->
+    <div id="v-cargar" class="vista hidden">
+      <form class="card" id="formDni" autocomplete="off">
+        <h2>Cargar elector</h2>
+        <label for="eDni">DNI</label>
+        <div class="dni-box"><input id="eDni" inputmode="numeric" maxlength="9" placeholder="Ej: 30111222" required><button class="btn" type="submit">Buscar</button></div>
+        <div id="dniMsg" class="msg"></div>
+        <div id="ficha" class="hidden"></div>
+      </form>
+      <div class="kpis" id="miAvance"></div>
+    </div>
+
+    <!-- LISTADO -->
+    <div id="v-listado" class="vista hidden">
+      <div class="card">
+        <div class="search"><input id="buscar" placeholder="Buscar por DNI o apellido"><select id="fLoc" style="max-width:45%"></select></div>
+        <div class="muted" id="cuenta" style="margin-top:8px"></div>
+        <div id="lista"></div>
+      </div>
+    </div>
+
+    <!-- ESTADÍSTICAS -->
+    <div id="v-tablero" class="vista hidden">
+      <div class="kpis" id="kpis"></div>
+      <div class="card"><h2>Avance del objetivo por localidad</h2>
+        <div class="leg"><span><i style="background:var(--azul)"></i>Cargados</span><span><i style="background:var(--gris)"></i>Falta para el objetivo</span></div>
+        <div class="charts" id="tortas"></div></div>
+      <div class="card"><h2>Cargas por día</h2>
+        <div class="filtros"><select id="stRef"></select><select id="stDias"><option value="14">Últimos 14 días</option><option value="30" selected>Últimos 30 días</option><option value="60">Últimos 60 días</option></select></div>
+        <div id="porDia" style="margin-top:10px"></div></div>
+      <div class="card"><h2>Historial por referente</h2><div id="porRef" style="overflow-x:auto"></div></div>
+      <div class="card"><h2>Por sexo</h2><div id="porSexo"></div></div>
+      <div class="card"><h2>Por edad</h2><div id="porEdad"></div></div>
+    </div>
+
+    <!-- REPORTES -->
+    <div id="v-reportes" class="vista hidden">
+      <div class="card">
+        <h2>Reportes y listados</h2>
+        <div class="filtros">
+          <div><label>Localidad</label><select id="rpLoc"></select></div>
+          <div><label>Referente</label><select id="rpRef"></select></div>
+          <div><label>Escuela</label><select id="rpEsc"></select></div>
+          <div><label>Desde</label><input type="date" id="rpDesde"></div>
+          <div><label>Hasta</label><input type="date" id="rpHasta"></div>
+          <div><label>Ordenar / agrupar por</label><select id="rpOrden">
+            <option value="escuela">Escuela y mesa (para el día de la elección)</option>
+            <option value="apellido">Apellido</option>
+            <option value="referente">Referente</option>
+            <option value="fecha">Fecha de carga</option></select></div>
+        </div>
+        <div class="muted" id="rpCuenta" style="margin-top:10px"></div>
+        <div class="acciones">
+          <button class="btn" id="rpImprimir" type="button">🖨 Imprimir listado</button>
+          <button class="btn sec" id="rpCsv" type="button">Descargar Excel (CSV)</button>
+          <button class="btn sec" id="rpResumen" type="button">🖨 Imprimir resumen</button>
+        </div>
+        <div id="rpMsg" class="msg"></div>
+        <div id="rpPrev" style="overflow-x:auto;margin-top:6px"></div>
+      </div>
+    </div>
+
+    <!-- OBJETIVOS -->
+    <div id="v-objetivos" class="vista hidden">
+      <div class="card">
+        <h2>Objetivo por localidad</h2>
+        <p class="muted">Cantidad de electores que nos proponemos sumar en cada localidad.</p>
+        <div id="tablaObj"></div>
+        <label for="nuevaLoc">Agregar localidad</label>
+        <div class="search"><input id="nuevaLoc" placeholder="Nombre"><button class="btn sm" id="btnAddLoc" type="button">Agregar</button></div>
+        <div id="objMsg" class="msg"></div>
+      </div>
+    </div>
+
+    <!-- FISCAL -->
+    <div id="v-fiscal" class="vista hidden">
+      <form class="card" id="fMesaForm" autocomplete="off">
+        <h2>¿En qué mesa fiscalizás?</h2>
+        <label for="fMesa">Número de mesa</label>
+        <div class="dni-box"><input id="fMesa" inputmode="numeric" maxlength="6" placeholder="Ej: 1001" required><button class="btn" type="submit">Usar</button></div>
+        <div id="fMesaMsg" class="msg"></div>
+      </form>
+      <div id="fCarga" class="hidden">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:start;gap:8px">
+            <div><h2 style="margin:0">Mesa <span id="fMesaN"></span></h2><div class="muted" id="fMesaDesc"></div></div>
+            <button class="btn sm sec" id="fCambiar" type="button">Cambiar mesa</button>
+          </div>
+          <div class="contador" style="margin-top:12px"><b id="fCont">0</b><div class="muted" id="fContTxt"></div></div>
+          <div class="bar" style="margin-top:6px"><i id="fBar" style="width:0"></i></div>
+        </div>
+        <form class="card orden-box" id="fVotoForm" autocomplete="off">
+          <label for="fOrden" style="text-align:center">N° de orden del elector que votó</label>
+          <input id="fOrden" inputmode="numeric" maxlength="4" placeholder="—" required>
+          <button class="btn voto full" type="submit">✓ VOTÓ</button>
+          <div id="fRes" class="resultado hidden"></div>
+          <div id="fPend" class="pend hidden"></div>
+        </form>
+        <div class="card"><h2>Últimos registrados</h2><div id="fUlt"></div></div>
+      </div>
+    </div>
+
+    <!-- ELECCIÓN (seguimiento) -->
+    <div id="v-eleccion" class="vista hidden">
+      <div class="card" style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <div><h2 style="margin:0">Día de la elección</h2><div class="muted" id="elAct">—</div></div>
+        <button class="btn sm sec" id="elRefrescar" type="button">↻ Actualizar</button>
+      </div>
+      <div class="kpis" id="elKpis"></div>
+      <div class="card"><h2>Compromisos que ya votaron, por localidad</h2>
+        <div class="leg"><span><i style="background:var(--azul)"></i>Ya votaron</span><span><i style="background:var(--gris)"></i>Faltan votar</span></div>
+        <div class="charts" id="elTortas"></div></div>
+      <div class="card"><h2>Compromisos votando por hora</h2><div id="elHora"></div></div>
+      <div class="card">
+        <h2>Compromisos que faltan votar</h2>
+        <p class="muted">Listado para enviar a cada referente y salir a buscarlos.</p>
+        <div class="filtros">
+          <div><label>Localidad</label><select id="elLoc"></select></div>
+          <div><label>Referente</label><select id="elRef"></select></div>
+          <div><label>Escuela</label><select id="elEsc"></select></div>
+          <div><label>Agrupar por</label><select id="elAgr"><option value="referente">Referente</option><option value="escuela">Escuela y mesa</option></select></div>
+        </div>
+        <div class="muted" id="elCuenta" style="margin-top:10px"></div>
+        <div class="acciones">
+          <button class="btn" id="elImprimir" type="button">🖨 Imprimir faltantes</button>
+          <button class="btn sec" id="elCsv" type="button">Descargar Excel (CSV)</button>
+          <button class="btn sec" id="elImpMesas" type="button">🖨 Imprimir estado por mesa</button>
+        </div>
+        <div id="elMsg" class="msg"></div>
+      </div>
+      <div class="card"><h2>Estado por mesa</h2><div id="elMesas" style="overflow-x:auto"></div></div>
+    </div>
+
+    <!-- PADRON -->
+    <div id="v-padron" class="vista hidden">
+      <div class="card">
+        <h2>Padrón</h2>
+        <p class="muted" id="padronInfo">Cargando…</p>
+        <label for="archivo">Importar padrón (Excel o CSV)</label>
+        <input type="file" id="archivo" accept=".xlsx,.xls,.csv,.txt">
+        <div id="mapeo" class="hidden">
+          <p class="muted">Indicá qué columna del archivo corresponde a cada dato. Solo el DNI es obligatorio.</p>
+          <div class="mapa" id="mapaCampos"></div>
+          <div id="muestra" style="overflow-x:auto;margin-top:10px"></div>
+          <button class="btn full" id="btnImportar" type="button">Importar</button>
+        </div>
+        <div id="impMsg" class="msg"></div>
+      </div>
+    </div>
+
+    <!-- USUARIOS -->
+    <div id="v-usuarios" class="vista hidden">
+      <form class="card" id="nuForm" autocomplete="off">
+        <h2>Nuevo usuario</h2>
+        <label for="nuNombre">Nombre y apellido</label><input id="nuNombre" required>
+        <label for="nuMail">Mail (será su usuario)</label><input id="nuMail" type="email" required autocomplete="off">
+        <label for="nuClave">Contraseña (mínimo 8 caracteres)</label>
+        <div class="search"><input id="nuClave" required minlength="8" autocomplete="new-password"><button class="btn sm sec" id="nuGenerar" type="button">Generar</button></div>
+        <div class="row">
+          <div><label for="nuRol">Tipo de usuario</label><select id="nuRol"></select></div>
+          <div><label for="nuLoc">Localidad</label><select id="nuLoc"></select></div>
+        </div>
+        <button class="btn full" type="submit" id="nuBtn">Crear usuario</button>
+        <div id="nuMsg" class="msg"></div>
+        <div id="nuDatos" class="ficha f-ok hidden"></div>
+      </form>
+      <div class="card">
+        <h2>Usuarios</h2>
+        <p class="muted">Cambiá el rol, la localidad o desactivá a quien deje de participar. Los cambios se guardan solos.</p>
+        <div id="tablaUsr" style="overflow-x:auto"></div>
+        <div id="usrMsg" class="msg"></div>
+      </div>
+      <div class="card">
+        <h2>Copia de seguridad</h2>
+        <p class="muted">Descarga todos los electores en una planilla (CSV). Hacelo una vez por semana.</p>
+        <button class="btn sec" id="btnBackup" type="button">Descargar copia</button>
+        <div id="bkMsg" class="msg"></div>
+      </div>
+    </div>
+  </main>
+</section>
+
+<div id="printArea"></div>
+<div id="dlg" class="hidden"><div class="card"><div id="dlgTxt"></div><div class="acts"><button class="btn sec" id="dlgNo">Cancelar</button><button class="btn" id="dlgOk">Confirmar</button></div></div></div>
+
+<script src="config.js"></script>
+<script type="module">
+const CFG = window.COMPUTOS_CONFIG || {};
+const DEMO = !CFG.SUPABASE_URL || !CFG.SUPABASE_ANON_KEY;
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = n => (n||0).toLocaleString("es-AR");
+const pct = (a,b) => b ? Math.round(a*100/b) : 0;
+const ROLES = {operario:"Operario de Cómputos", ref_localidad:"Referente de localidad", ref_territorial:"Referente territorial", fiscal:"Fiscal (día de elección)"};
+const ask = t => new Promise(r => { if (t !== null) $("dlgTxt").textContent = t; $("dlg").classList.remove("hidden");
+  const end = v => { $("dlg").classList.add("hidden"); r(v); }; $("dlgOk").onclick = () => end(true); $("dlgNo").onclick = () => end(false); });
+const setMsg = (id, t, cls="") => { const e = $(id); e.className = "msg " + cls; e.textContent = t || ""; };
+
+// =====================================================================
+// CAPA DE DATOS: Supabase real o demo en memoria
+// =====================================================================
+let api;
+if (!DEMO) {
+  let createClient;
+  try { ({ createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm")); }
+  catch(_){ document.body.insertAdjacentHTML("afterbegin", '<div class="demo">No se pudo cargar la app (sin internet o bloqueado). Recargá la página.</div>'); throw _; }
+  const sb = createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY);
+  const chk = ({data, error}) => { if (error) throw error; return data; };
+  api = {
+    async sesion(){ const { data } = await sb.auth.getSession(); return data.session?.user || null; },
+    async ingresar(email, password){ const { data, error } = await sb.auth.signInWithPassword({email, password}); if (error) throw error; return data.user; },
+    async salir(){ await sb.auth.signOut(); },
+    async perfil(uid){ return chk(await sb.from("perfiles").select("*").eq("id", uid).maybeSingle()); },
+    async localidades(){ return chk(await sb.from("localidades").select("*").order("nombre")); },
+    async guardarLocalidad(id, campos){ return chk(await sb.from("localidades").update(campos).eq("id", id)); },
+    async agregarLocalidad(nombre){ return chk(await sb.from("localidades").insert({nombre})); },
+    async electores(){ // trae todo lo visible para este usuario (paginado)
+      let out = [], from = 0, step = 1000;
+      while (true) { const rows = chk(await sb.from("electores").select("*").order("creado", {ascending:false}).range(from, from+step-1)); out = out.concat(rows); if (rows.length < step) break; from += step; }
+      return out;
+    },
+    async buscarPadron(dni){ return (chk(await sb.rpc("buscar_padron", {p_dni: dni})) || [])[0] || null; },
+    async padronCount(){ const { count, error } = await sb.from("padron").select("dni", {count:"exact", head:true}); if (error) throw error; return count; },
+    async importarPadron(rows){ return chk(await sb.from("padron").upsert(rows, {onConflict:"dni"})); },
+    async sincLocalidades(){ return chk(await sb.rpc("sincronizar_localidades")); },
+    async mesaInfo(m){ return (chk(await sb.rpc("mesa_info", {p_mesa:m})) || [])[0] || null; },
+    async registrarVoto(m, o){ return (chk(await sb.rpc("registrar_voto", {p_mesa:m, p_orden:o})) || [])[0] || null; },
+    async deshacerVoto(m, o){ return chk(await sb.rpc("deshacer_voto", {p_mesa:m, p_orden:o})); },
+    async votosMesa(m){ return chk(await sb.rpc("votos_mesa", {p_mesa:m})) || []; },
+    async eleccionMesas(){ return chk(await sb.rpc("eleccion_mesas")) || []; },
+    async compromisosVotaron(){ let out = [], from = 0; while (true){ const r = chk(await sb.from("compromisos_votaron").select("dni,hora,mesa").range(from, from+999)); out = out.concat(r); if (r.length < 1000) break; from += 1000; } return out; },
+    async insertar(e){ return chk(await sb.from("electores").insert(e)); },
+    async actualizar(id, e){ return chk(await sb.from("electores").update(e).eq("id", id)); },
+    async borrar(id){ return chk(await sb.from("electores").delete().eq("id", id)); },
+    async resumen(){ return chk(await sb.from("resumen").select("*")); },
+    async perfiles(){ return chk(await sb.from("perfiles").select("*").order("nombre")); },
+    async guardarPerfil(id, campos){ return chk(await sb.from("perfiles").update(campos).eq("id", id)); },
+    async crearUsuario(u){ return chk(await sb.rpc("crear_usuario", {p_email:u.email, p_clave:u.clave, p_nombre:u.nombre, p_rol:u.rol, p_localidad:u.localidad_id})); },
+    async cambiarClave(id, clave){ return chk(await sb.rpc("cambiar_clave", {p_usuario:id, p_clave:clave})); }
+  };
+} else {
+  // ---- DEMO ----
+  const L = ["Rincón de los Sauces","Añelo","Plaza Huincul","Cutral Có","Buta Ranquil","San Patricio del Chañar","Neuquén"];
+  const db = {
+    localidades: L.map((n,i) => ({id:i+1, nombre:n, objetivo:[3000,1500,1800,4000,700,1200,8000][i]})),
+    perfiles: [
+      {id:"u1", email:"computos@demo", nombre:"Micaela Fernández", rol:"operario", localidad_id:1, activo:true},
+      {id:"u2", email:"refrincon@demo", nombre:"Ref. Cómputos Rincón", rol:"ref_localidad", localidad_id:1, activo:true},
+      {id:"u3", email:"barrio1@demo", nombre:"Ref. Barrio Centro", rol:"ref_territorial", localidad_id:1, activo:true},
+      {id:"u4", email:"barrio2@demo", nombre:"Ref. Barrio Norte", rol:"ref_territorial", localidad_id:1, activo:true},
+      {id:"u5", email:"anelo@demo", nombre:"Ref. Añelo", rol:"ref_territorial", localidad_id:2, activo:true},
+      {id:"u6", email:"nuevo@demo", nombre:"", rol:null, localidad_id:null, activo:true},
+      {id:"u7", email:"fiscal1@demo", nombre:"Fiscal Escuela 100", rol:"fiscal", localidad_id:1, activo:true}
+    ],
+    electores: []
+  };
+  const ape = ["González","Rodríguez","Gómez","Fernández","López","Díaz","Martínez","Pérez","Sosa","Romero","Álvarez","Torres","Ruiz","Ramírez","Flores","Acosta","Benítez","Medina","Herrera","Suárez"];
+  const nom = ["María","Juan","Ana","Carlos","Laura","José","Sofía","Miguel","Lucía","Diego","Paula","Jorge","Valeria","Martín","Florencia"];
+  const padron = new Map();
+  const calles = ["San Martín","Belgrano","Roca","Mitre","Sarmiento","Rivadavia","Las Lajas","Neuquén"];
+  for (let k=0;k<4000;k++){ const loc = L[k%7]; const d = String(30000001+k);
+    padron.set(d, {dni:d, apellido:ape[k%20].toUpperCase(), nombre:nom[(k*7)%15], clase:String(1950+(k%55)), sexo:k%2?"M":"F", domicilio:calles[k%8]+" "+(100+k%900), localidad:loc.toUpperCase(), circuito:String(10+(k%7)), escuela:"Escuela N° "+(100+(k%7)*3+(Math.floor(k/7)%10>4?1:0)), mesa:String(1000+(k%7)*10+(Math.floor(k/7)%10)), orden:String(Math.floor(k/70)+1)}); }
+  let seq = 1;
+  const reparto = [["u3",1,412],["u4",1,287],["u2",1,95],["u5",2,338],["u1",4,610],["u1",3,240]];
+  const libres = l => [...padron.values()].filter(p => p.localidad === L[l-1].toUpperCase() && !db.electores.some(e => e.dni === p.dni));
+  reparto.forEach(([u,l,n]) => { libres(l).slice(n%13+20, n%13+20+n).forEach((p,k) => db.electores.push({...p, id:seq++, localidad_id:l, telefono:"", cargado_por:u, creado:new Date(Date.now()-k*3.6e6).toISOString()})); });
+  // votos de prueba: ~55% de los electores de algunas mesas ya votaron, entre las 8 y ahora
+  const votos = new Map(); const hoy8 = new Date(); hoy8.setHours(8,0,0,0);
+  [...padron.values()].forEach((p,k) => { if (+p.mesa % 3 !== 0 && (k*37)%100 < 55) votos.set(p.dni, {dni:p.dni, mesa:p.mesa, orden:p.orden, fiscal:"u7", hora:new Date(hoy8.getTime() + ((k*7919)%600)*60000).toISOString()}); });
+  let yo = "u1";
+  const me = () => db.perfiles.find(p => p.id === yo);
+  const visible = e => { const p = me(); return p.rol==="operario" || (p.rol==="ref_localidad" && e.localidad_id===p.localidad_id) || e.cargado_por===yo; };
+  const wait = v => new Promise(r => setTimeout(() => r(v), 120));
+  api = {
+    setDemoUser(rol){ yo = {operario:"u1", ref_localidad:"u2", ref_territorial:"u3", fiscal:"u7"}[rol]; },
+    async sesion(){ return {id:yo}; }, async ingresar(){ return {id:yo}; }, async salir(){},
+    async perfil(){ return wait({...me()}); },
+    async localidades(){ return wait(db.localidades.map(x=>({...x})).sort((a,b)=>a.nombre.localeCompare(b.nombre))); },
+    async guardarLocalidad(id, c){ Object.assign(db.localidades.find(x=>x.id===id), c); },
+    async agregarLocalidad(nombre){ db.localidades.push({id:db.localidades.length+1, nombre, objetivo:0}); },
+    async electores(){ return wait(db.electores.filter(visible).map(x=>({...x})).reverse()); },
+    async buscarPadron(dni){ const p = padron.get(dni); const r = me().rol;
+      if (!p) return wait({dni, estado:"no_padron"});
+      const loc = db.localidades.find(l => l.nombre.toUpperCase() === p.localidad)?.id;
+      const estado = db.electores.some(e=>e.dni===dni) ? "ya_cargado" : !loc ? "sin_localidad" : (r!=="operario" && loc!==me().localidad_id) ? "otra_localidad" : "ok";
+      return wait({...p, estado}); },
+    async padronCount(){ return padron.size; },
+    async importarPadron(rows){ rows.forEach(r => padron.set(r.dni, r)); },
+    async sincLocalidades(){ return 0; },
+    async mesaInfo(m){ const ps = [...padron.values()].filter(p => +p.mesa === +m); if (!ps.length) return {mesa:m, estado:"no_existe"};
+      const loc = db.localidades.find(l => l.nombre.toUpperCase() === ps[0].localidad)?.id;
+      if (me().rol==="fiscal" && loc!==me().localidad_id) return {mesa:m, escuela:ps[0].escuela, localidad:ps[0].localidad, electores:ps.length, estado:"otra_localidad"};
+      return wait({mesa:m, escuela:ps[0].escuela, localidad:ps[0].localidad, electores:ps.length, votaron:[...votos.values()].filter(v=>+v.mesa===+m).length, estado:"ok"}); },
+    async registrarVoto(m, o){ const p = [...padron.values()].find(p => +p.mesa === +m && +p.orden === +o); if (!p) return wait({orden:o, estado:"no_existe"});
+      const loc = db.localidades.find(l => l.nombre.toUpperCase() === p.localidad)?.id;
+      if (me().rol==="fiscal" && loc!==me().localidad_id) return {orden:o, estado:"otra_localidad"};
+      if (votos.has(p.dni)) return wait({apellido:p.apellido, nombre:p.nombre, orden:p.orden, estado:"ya_registrado"});
+      votos.set(p.dni, {dni:p.dni, mesa:p.mesa, orden:p.orden, fiscal:yo, hora:new Date().toISOString()}); return wait({apellido:p.apellido, nombre:p.nombre, orden:p.orden, estado:"ok"}); },
+    async deshacerVoto(m, o){ for (const [k,v] of votos) if (+v.mesa===+m && +v.orden===+o){ votos.delete(k); return true; } return false; },
+    async votosMesa(m){ return wait([...votos.values()].filter(v=>+v.mesa===+m).sort((a,b)=>b.hora.localeCompare(a.hora)).slice(0,30).map(v => ({...v, apellido:padron.get(v.dni).apellido, nombre:padron.get(v.dni).nombre, propio:v.fiscal===yo}))); },
+    async eleccionMesas(){ const m = {}; const vis = id => me().rol==="operario" || id===me().localidad_id;
+      padron.forEach(p => { const loc = db.localidades.find(l => l.nombre.toUpperCase() === p.localidad)?.id; if (!vis(loc)) return; const k = String(+p.mesa); m[k] = m[k] || {localidad_id:loc, escuela:p.escuela, mesa:k, padron:0, votaron:0, compromisos:0, compromisos_votaron:0, ultimo:null}; m[k].padron++; });
+      votos.forEach(v => { const x = m[String(+v.mesa)]; if (x){ x.votaron++; if (!x.ultimo || v.hora > x.ultimo) x.ultimo = v.hora; } });
+      db.electores.forEach(e => { const x = m[String(+e.mesa)]; if (x){ x.compromisos++; if (votos.has(e.dni)) x.compromisos_votaron++; } });
+      return wait(Object.values(m)); },
+    async compromisosVotaron(){ return wait(db.electores.filter(visible).filter(e => votos.has(e.dni)).map(e => ({dni:e.dni, hora:votos.get(e.dni).hora, mesa:e.mesa}))); },
+    async insertar(e){ const p = padron.get(e.dni); if (!p) throw {message:"NO_PADRON"}; if (db.electores.some(x=>x.dni===e.dni)) throw {code:"23505"};
+      const loc = db.localidades.find(l => l.nombre.toUpperCase() === p.localidad)?.id;
+      if (me().rol!=="operario" && loc!==me().localidad_id) throw {code:"42501"};
+      db.electores.push({...p, ...e, localidad_id:loc, id:seq++, cargado_por:yo, creado:new Date().toISOString()}); },
+    async actualizar(id, e){ Object.assign(db.electores.find(x=>x.id===id), {telefono:e.telefono}); },
+    async borrar(id){ db.electores = db.electores.filter(x=>x.id!==id); },
+    async resumen(){ const m = {}; db.electores.filter(visible).forEach(e => { const k=e.localidad_id+"|"+e.cargado_por; m[k]=(m[k]||0)+1; });
+      return Object.entries(m).map(([k,c]) => { const [l,u]=k.split("|"); return {localidad_id:+l, cargado_por:u, cantidad:c}; }); },
+    async perfiles(){ const p = me(); return db.perfiles.filter(x => p.rol==="operario" || x.id===yo || (p.rol==="ref_localidad" && x.localidad_id===p.localidad_id)).map(x=>({...x})); },
+    async guardarPerfil(id, c){ Object.assign(db.perfiles.find(x=>x.id===id), c); },
+    async crearUsuario(u){ if (db.perfiles.some(p=>p.email===u.email.toLowerCase())) throw {message:"MAIL_EXISTE"}; const id = "u"+(db.perfiles.length+10); db.perfiles.push({id, email:u.email.toLowerCase(), nombre:u.nombre, rol:u.rol, localidad_id:u.localidad_id, activo:true}); return id; },
+    async cambiarClave(){ return true; }
+  };
+}
+
+// =====================================================================
+// ESTADO Y NAVEGACIÓN
+// =====================================================================
+const S = { perfil:null, locs:[], electores:[], perfiles:[], resumen:[], editando:null, vista:"cargar" };
+const VISTAS = {
+  operario:        [["cargar","Cargar"],["listado","Electores"],["tablero","Estadísticas"],["reportes","Reportes"],["eleccion","Elección"],["objetivos","Objetivos"],["padron","Padrón"],["usuarios","Usuarios"]],
+  ref_localidad:   [["cargar","Cargar"],["listado","Electores"],["tablero","Estadísticas"],["reportes","Reportes"],["eleccion","Elección"]],
+  fiscal:          [["fiscal","Fiscal"]],
+  ref_territorial: [["cargar","Cargar"],["listado","Mis electores"],["reportes","Imprimir"]]
+};
+const locNombre = id => S.locs.find(l => l.id === id)?.nombre || "—";
+const perfNombre = id => { const p = S.perfiles.find(p => p.id === id); return p ? (p.nombre || p.email) : (id === S.perfil?.id ? "Yo" : "Otro usuario"); };
+
+function irA(v){
+  S.vista = v;
+  document.querySelectorAll(".vista").forEach(x => x.classList.toggle("hidden", x.id !== "v-"+v));
+  [...$("tabs").children].forEach(b => b.classList.toggle("on", b.dataset.v === v));
+  render();
+}
+$("tabs").addEventListener("click", e => { const b = e.target.closest("button"); if (b) irA(b.dataset.v); });
+
+async function cargarTodo(){
+  if (S.perfil?.rol === "fiscal"){ S.locs = await api.localidades(); S.electores = []; S.resumen = []; S.perfiles = []; return; }
+  const [locs, electores, resumen, perfiles] = await Promise.all([api.localidades(), api.electores(), api.resumen(), api.perfiles()]);
+  Object.assign(S, {locs, electores, resumen, perfiles});
+}
+
+async function iniciar(){
+  const u = await api.sesion();
+  if (!u){ $("login").classList.remove("hidden"); $("app").classList.add("hidden"); return; }
+  S.perfil = await api.perfil(u.id);
+  $("login").classList.add("hidden"); $("app").classList.remove("hidden");
+  const rol = S.perfil?.rol;
+  $("quien").textContent = (S.perfil?.nombre || S.perfil?.email || "") + (rol ? " · " + ROLES[rol] : "");
+  if (!rol || !S.perfil.activo){ $("sinRol").classList.remove("hidden"); $("tabs").innerHTML=""; document.querySelectorAll(".vista").forEach(x=>x.classList.add("hidden")); return; }
+  $("sinRol").classList.add("hidden");
+  $("tabs").innerHTML = VISTAS[rol].map(([v,t]) => `<button data-v="${v}">${t}</button>`).join("");
+  await cargarTodo();
+  if (!VISTAS[rol].some(([v]) => v === S.vista)) S.vista = VISTAS[rol][0][0];
+  irA(S.vista);
+}
+
+$("loginForm").addEventListener("submit", async e => {
+  e.preventDefault(); setMsg("loginMsg","");
+  try { await api.ingresar($("lEmail").value.trim(), $("lPass").value); iniciar(); }
+  catch(err){
+    const m = String(err?.message || err || "");
+    setMsg("loginMsg",
+      /confirm/i.test(m) ? "El mail del usuario no está confirmado. Avisá al equipo de Cómputos." :
+      /invalid login|credentials/i.test(m) ? "Usuario o contraseña incorrectos." :
+      /fetch|network/i.test(m) ? "Sin conexión con el servidor. Revisá internet." :
+      "No se pudo ingresar: " + m, "err");
+  }
+});
+$("btnSalir").addEventListener("click", async () => { await api.salir(); if (DEMO) return; location.reload(); });
+
+// =====================================================================
+// RENDER
+// =====================================================================
+function render(){
+  const rol = S.perfil.rol, miLoc = S.perfil.localidad_id;
+  // filtro listado
+  const fcur = $("fLoc").value;
+  const locsVer = rol === "operario" ? S.locs : S.locs.filter(l => l.id === miLoc);
+  $("fLoc").innerHTML = (rol === "operario" ? '<option value="">Todas</option>' : "") + locsVer.map(l => `<option value="${l.id}">${esc(l.nombre)}</option>`).join("");
+  if (fcur) $("fLoc").value = fcur;
+  $("fLoc").classList.toggle("hidden", rol !== "operario");
+
+  if (S.vista === "cargar") renderAvance();
+  if (S.vista === "listado") renderLista();
+  if (S.vista === "tablero") renderTablero();
+  if (S.vista === "objetivos") renderObjetivos();
+  if (S.vista === "usuarios") renderUsuarios();
+  if (S.vista === "padron") renderPadron();
+  if (S.vista === "reportes") renderReportes();
+  if (S.vista === "fiscal") renderFiscal();
+  if (S.vista === "eleccion") cargarEleccion();
+}
+
+function renderAvance(){
+  const mios = S.resumen.filter(r => r.cargado_por === S.perfil.id).reduce((a,r)=>a+r.cantidad,0);
+  const hoy = S.electores.filter(e => e.cargado_por === S.perfil.id && new Date(e.creado).toDateString() === new Date().toDateString()).length;
+  $("miAvance").innerHTML = `<div class="kpi"><b>${fmt(mios)}</b><span>Electores cargados por mí</span></div><div class="kpi"><b>${fmt(hoy)}</b><span>Cargados hoy</span></div>`;
+}
+
+function renderLista(){
+  const q = $("buscar").value.trim().toLowerCase(), fl = $("fLoc").value;
+  let rows = S.electores.filter(e => (!fl || String(e.localidad_id) === fl) && (!q || e.dni.includes(q) || (e.apellido+" "+e.nombre).toLowerCase().includes(q)));
+  $("cuenta").textContent = `${fmt(rows.length)} electores` + (rows.length > 200 ? " · mostrando los últimos 200" : "");
+  const puedeBorrar = true;
+  $("lista").innerHTML = rows.slice(0,200).map(e => `<div class="list-item"><div class="who"><b>${esc(e.apellido)}, ${esc(e.nombre)}</b><span>DNI ${esc(e.dni)} · ${esc(locNombre(e.localidad_id))}${e.escuela?" · "+esc(e.escuela):""}${e.mesa?" · Mesa "+esc(e.mesa):""}${e.telefono?" · ☎ "+esc(e.telefono):""}${S.perfil.rol!=="ref_territorial"?" · "+esc(perfNombre(e.cargado_por)):""}</span></div><div style="white-space:nowrap"><button class="btn sm sec" data-ed="${e.id}">Teléfono</button>${puedeBorrar?` <button class="btn sm danger" data-del="${e.id}">Borrar</button>`:""}</div></div>`).join("") || '<p class="muted">Todavía no hay electores cargados.</p>';
+}
+$("buscar").addEventListener("input", renderLista);
+$("fLoc").addEventListener("change", renderLista);
+
+function barra(a, b){ const p = pct(a,b); return `<div class="bar"><i class="${p>=100?"done":""}" style="width:${Math.min(100,p)}%"></i></div>`; }
+
+// ---------- gráficos SVG ----------
+const dia = d => new Date(d).toISOString().slice(0,10);
+function donut(valor, total, color="var(--azul)"){
+  const r = 46, C = 2*Math.PI*r, p = total ? Math.min(1, valor/total) : 0;
+  return `<svg viewBox="0 0 120 120" role="img"><title>${fmt(valor)} de ${fmt(total)} (${pct(valor,total)}%)</title>
+    <circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--gris)" stroke-opacity=".45" stroke-width="16"/>
+    <circle cx="60" cy="60" r="${r}" fill="none" stroke="${color}" stroke-width="16" stroke-linecap="${p>0&&p<1?"round":"butt"}"
+      stroke-dasharray="${C*p} ${C}" transform="rotate(-90 60 60)"/>
+    <text x="60" y="66" text-anchor="middle" style="font-size:22px;font-weight:700;fill:var(--ink)">${pct(valor,total)}%</text></svg>`;
+}
+function torta(partes){ // [{t, v, c}]
+  const tot = partes.reduce((a,x)=>a+x.v,0); if (!tot) return '<p class="muted">Sin datos.</p>';
+  let ang = -Math.PI/2; const r = 52;
+  const arcos = partes.filter(x=>x.v).map(x => { const a2 = ang + 2*Math.PI*x.v/tot;
+    const large = a2-ang > Math.PI ? 1 : 0, p = (a)=>[60+r*Math.cos(a), 60+r*Math.sin(a)];
+    const [x1,y1]=p(ang),[x2,y2]=p(a2);
+    const d = x.v===tot ? `M60 8 A52 52 0 1 1 59.99 8Z` : `M60 60 L${x1} ${y1} A${r} ${r} 0 ${large} 1 ${x2} ${y2}Z`; ang = a2;
+    return `<path d="${d}" fill="${x.c}" stroke="var(--card)" stroke-width="2"><title>${esc(x.t)}: ${fmt(x.v)} (${pct(x.v,tot)}%)</title></path>`; }).join("");
+  return `<div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><svg viewBox="0 0 120 120" style="width:120px;height:120px">${arcos}</svg>
+    <div class="leg" style="flex-direction:column;gap:4px">${partes.map(x=>`<span><i style="background:${x.c}"></i>${esc(x.t)}: <b style="color:var(--ink)">${fmt(x.v)}</b> (${pct(x.v,tot)}%)</span>`).join("")}</div></div>`;
+}
+function grafColumnas(datos){ // [{t, v}]
+  const W = 600, H = 170, pad = 22, max = Math.max(1, ...datos.map(d=>d.v)), bw = (W-pad)/datos.length;
+  const barras = datos.map((d,i) => { const h = (H-30)*d.v/max, x = pad + i*bw + 1, y = H-18-h;
+    return `<g><rect x="${pad+i*bw}" y="0" width="${bw}" height="${H}" fill="transparent"><title>${d.t}: ${fmt(d.v)} cargas</title></rect>
+      <rect x="${x}" y="${y}" width="${Math.max(1,bw-2)}" height="${h}" rx="${Math.min(4,bw/3)}" fill="var(--azul)" pointer-events="none"/></g>`; }).join("");
+  const etiquetas = datos.map((d,i) => (i % Math.ceil(datos.length/7) === 0) ? `<text x="${pad+i*bw+bw/2}" y="${H-4}" text-anchor="middle">${d.t.slice(8,10)}/${d.t.slice(5,7)}</text>` : "").join("");
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto"><line x1="${pad}" x2="${W}" y1="${H-18}" y2="${H-18}" stroke="var(--line)"/>
+    <text x="0" y="12">${fmt(max)}</text>${barras}${etiquetas}</svg>`;
+}
+function barrasH(datos){ // [{t, v}]
+  const max = Math.max(1, ...datos.map(d=>d.v)), tot = datos.reduce((a,d)=>a+d.v,0);
+  return datos.map(d => `<div class="meta"><span>${esc(d.t)}</span><span><b>${fmt(d.v)}</b> · ${pct(d.v,tot)}%</span></div><div class="bar" title="${esc(d.t)}: ${fmt(d.v)}"><i style="width:${d.v*100/max}%"></i></div>`).join("") || '<p class="muted">Sin datos.</p>';
+}
+
+function renderTablero(){
+  const rol = S.perfil.rol;
+  const locs = rol === "operario" ? S.locs : S.locs.filter(l => l.id === S.perfil.localidad_id);
+  const E = S.electores;
+  const porLoc = id => E.filter(e => e.localidad_id === id).length;
+  const total = E.length, obj = locs.reduce((a,l)=>a+(l.objetivo||0),0);
+  const hoy = dia(Date.now()), hace7 = dia(Date.now()-6*864e5);
+  const refs = new Set(E.map(e => e.cargado_por));
+  $("kpis").innerHTML = [[fmt(total),"Electores que nos acompañan"],[fmt(obj),"Objetivo"],[pct(total,obj)+"%","Cumplimiento"],
+    [fmt(E.filter(e=>dia(e.creado)===hoy).length),"Cargados hoy"],[fmt(E.filter(e=>dia(e.creado)>=hace7).length),"Últimos 7 días"],[fmt(refs.size),"Referentes cargando"]]
+    .map(([a,b]) => `<div class="kpi"><b>${a}</b><span>${b}</span></div>`).join("");
+  // tortas por localidad (+ total)
+  const items = (locs.length > 1 ? [{nombre:"TOTAL", objetivo:obj, c:total}] : []).concat(locs.map(l => ({...l, c:porLoc(l.id)})));
+  $("tortas").innerHTML = items.map(l => `<div class="donut">${donut(l.c, l.objetivo, l.c>=l.objetivo&&l.objetivo?"var(--ok)":"var(--azul)")}<b>${esc(l.nombre)}</b><span>${fmt(l.c)} de ${fmt(l.objetivo)}${l.objetivo?"":" (sin objetivo)"}</span></div>`).join("");
+  // selector referente
+  const cur = $("stRef").value;
+  $("stRef").innerHTML = '<option value="">Todos los referentes</option>' + [...refs].map(u => `<option value="${esc(u)}">${esc(perfNombre(u))}</option>`).join("");
+  $("stRef").value = [...refs].includes(cur) ? cur : "";
+  renderPorDia();
+  // historial por referente
+  const m = {};
+  E.forEach(e => { const x = m[e.cargado_por] = m[e.cargado_por] || {c:0, hoy:0, s7:0, s30:0, ult:"", locs:new Set()};
+    x.c++; x.locs.add(e.localidad_id); const d = dia(e.creado);
+    if (d===hoy) x.hoy++; if (d>=hace7) x.s7++; if (d>=dia(Date.now()-29*864e5)) x.s30++; if (e.creado > x.ult) x.ult = e.creado; });
+  const filas = Object.entries(m).sort((a,b)=>b[1].c-a[1].c);
+  $("porRef").innerHTML = filas.length ? `<table><tr><th>Referente</th><th>Localidad</th><th class="n">Total</th><th class="n">Hoy</th><th class="n">7 días</th><th class="n">30 días</th><th>Última carga</th></tr>${filas.map(([u,x]) =>
+    `<tr><td>${esc(perfNombre(u))}</td><td>${x.locs.size>1?"Varias":esc(locNombre([...x.locs][0]))}</td><td class="n"><b>${fmt(x.c)}</b></td><td class="n">${fmt(x.hoy)}</td><td class="n">${fmt(x.s7)}</td><td class="n">${fmt(x.s30)}</td><td>${new Date(x.ult).toLocaleDateString("es-AR",{day:"2-digit",month:"2-digit"})+" "+new Date(x.ult).toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",hour12:false})}</td></tr>`).join("")}</table>` : '<p class="muted">Sin cargas todavía.</p>';
+  // sexo
+  const sx = {F:0, M:0, X:0}; E.forEach(e => { const k = String(e.sexo||"").toUpperCase().startsWith("F") ? "F" : String(e.sexo||"").toUpperCase().startsWith("M") ? "M" : "X"; sx[k]++; });
+  $("porSexo").innerHTML = torta([{t:"Mujeres",v:sx.F,c:"var(--azul)"},{t:"Varones",v:sx.M,c:"#6b8fb8"},{t:"Otro / sin dato",v:sx.X,c:"var(--gris)"}]);
+  // edad
+  const anio = new Date().getFullYear(), fr = [["16 a 17",16,17],["18 a 29",18,29],["30 a 44",30,44],["45 a 59",45,59],["60 a 74",60,74],["75 o más",75,200]];
+  const cnt = fr.map(f => ({t:f[0], v:0})); let sinDato = 0;
+  E.forEach(e => { const c = parseInt(e.clase,10); if (!c){ sinDato++; return; } const ed = anio - c; const i = fr.findIndex(f => ed>=f[1] && ed<=f[2]); if (i>=0) cnt[i].v++; else sinDato++; });
+  if (sinDato) cnt.push({t:"Sin dato", v:sinDato});
+  $("porEdad").innerHTML = barrasH(cnt);
+}
+function renderPorDia(){
+  const n = +$("stDias").value, u = $("stRef").value, datos = [];
+  for (let i = n-1; i >= 0; i--) datos.push({t: dia(Date.now()-i*864e5), v:0});
+  const idx = Object.fromEntries(datos.map((d,i)=>[d.t,i]));
+  S.electores.forEach(e => { if (u && e.cargado_por !== u) return; const i = idx[dia(e.creado)]; if (i !== undefined) datos[i].v++; });
+  $("porDia").innerHTML = grafColumnas(datos) + `<div class="muted">${fmt(datos.reduce((a,d)=>a+d.v,0))} cargas en el período${u?" · "+esc(perfNombre(u)):""}</div>`;
+}
+$("stRef").addEventListener("change", renderPorDia);
+$("stDias").addEventListener("change", renderPorDia);
+
+// ---------- REPORTES ----------
+function renderReportes(){
+  const rol = S.perfil.rol;
+  const sel = (id, opts, todos) => { const c = $(id).value; $(id).innerHTML = (todos?`<option value="">${todos}</option>`:"") + opts.map(([v,t]) => `<option value="${esc(v)}">${esc(t)}</option>`).join(""); if ([...$(id).options].some(o=>o.value===c)) $(id).value = c; };
+  const locs = rol === "operario" ? S.locs : S.locs.filter(l => l.id === S.perfil.localidad_id);
+  sel("rpLoc", locs.map(l => [l.id, l.nombre]), rol === "operario" ? "Todas" : null);
+  const refs = [...new Set(S.electores.map(e => e.cargado_por))];
+  sel("rpRef", refs.map(u => [u, perfNombre(u)]), "Todos");
+  $("rpRef").parentElement.classList.toggle("hidden", rol === "ref_territorial");
+  const escuelas = [...new Set(S.electores.map(e => e.escuela).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es",{numeric:true}));
+  sel("rpEsc", escuelas.map(x => [x,x]), "Todas");
+  previewReporte();
+}
+function filasReporte(){
+  const l = $("rpLoc").value, u = $("rpRef").value, es = $("rpEsc").value, d1 = $("rpDesde").value, d2 = $("rpHasta").value, ord = $("rpOrden").value;
+  const rows = S.electores.filter(e => (!l || String(e.localidad_id)===l) && (!u || e.cargado_por===u) && (!es || e.escuela===es) && (!d1 || dia(e.creado)>=d1) && (!d2 || dia(e.creado)<=d2));
+  const c = (a,b) => String(a??"").localeCompare(String(b??""), "es", {numeric:true});
+  const cmp = {
+    escuela: (a,b) => c(locNombre(a.localidad_id),locNombre(b.localidad_id)) || c(a.escuela,b.escuela) || c(a.mesa,b.mesa) || c(a.orden,b.orden),
+    apellido: (a,b) => c(a.apellido,b.apellido) || c(a.nombre,b.nombre),
+    referente: (a,b) => c(perfNombre(a.cargado_por),perfNombre(b.cargado_por)) || c(a.apellido,b.apellido),
+    fecha: (a,b) => c(b.creado,a.creado)
+  }[ord];
+  return rows.sort(cmp);
+}
+function previewReporte(){
+  const rows = filasReporte();
+  $("rpCuenta").textContent = `${fmt(rows.length)} electores con estos filtros.`;
+  $("rpPrev").innerHTML = rows.length ? `<table><tr><th>DNI</th><th>Apellido y nombre</th><th>Escuela</th><th>Mesa</th><th>Orden</th></tr>${rows.slice(0,15).map(e=>`<tr><td>${esc(e.dni)}</td><td>${esc(e.apellido)}, ${esc(e.nombre)}</td><td>${esc(e.escuela||"")}</td><td>${esc(e.mesa||"")}</td><td>${esc(e.orden||"")}</td></tr>`).join("")}</table>${rows.length>15?`<p class="muted">… y ${fmt(rows.length-15)} más en el listado completo.</p>`:""}` : "";
+}
+["rpLoc","rpRef","rpEsc","rpDesde","rpHasta","rpOrden"].forEach(id => $(id).addEventListener("change", previewReporte));
+
+function encabezado(titulo, sub){
+  return `<div class="ph"><img src="icons/logo-192.png" alt=""><div><h1>${esc(titulo)}</h1><div>Fuerza Neuquina y Federal · Cómputos · ${esc(sub)}</div><div>Generado: ${new Date().toLocaleString("es-AR")} · por ${esc(S.perfil.nombre||S.perfil.email||"")}</div></div></div>`;
+}
+function filtrosTexto(){
+  const t = [];
+  const opt = id => $(id).selectedOptions[0]?.text;
+  if ($("rpLoc").value) t.push(opt("rpLoc")); if ($("rpRef").value) t.push("Referente: "+opt("rpRef")); if ($("rpEsc").value) t.push(opt("rpEsc"));
+  if ($("rpDesde").value || $("rpHasta").value) t.push(`Cargados ${$("rpDesde").value||"…"} a ${$("rpHasta").value||"…"}`);
+  return t.join(" · ") || "Todos";
+}
+function imprimir(html){
+  $("printArea").innerHTML = html;
+  try { window.print(); } catch(_){ setMsg("rpMsg","Este navegador no permite imprimir desde acá.","err"); }
+}
+$("rpImprimir").addEventListener("click", () => {
+  const rows = filasReporte(); if (!rows.length) return setMsg("rpMsg","No hay electores con esos filtros.","warn");
+  const ord = $("rpOrden").value, grupo = e => ord==="escuela" ? `${locNombre(e.localidad_id)} · ${e.escuela||"Sin escuela"} · Mesa ${e.mesa||"—"}` : ord==="referente" ? perfNombre(e.cargado_por) : null;
+  let ult = null, n = 0, cuerpo = "";
+  rows.forEach(e => { const g = grupo(e); if (g !== null && g !== ult){ cuerpo += `<tr class="grupo"><td colspan="9">${esc(g)}</td></tr>`; ult = g; }
+    cuerpo += `<tr><td>${++n}</td><td>${esc(e.dni)}</td><td>${esc(e.apellido)}, ${esc(e.nombre)}</td><td>${esc(e.domicilio||"")}</td><td>${esc(e.escuela||"")}</td><td>${esc(e.mesa||"")}</td><td>${esc(e.orden||"")}</td><td>${esc(e.telefono||"")}</td><td style="font-size:14px">☐</td></tr>`; });
+  imprimir(encabezado("Listado de electores que nos acompañan", filtrosTexto()) +
+    `<p><b>${fmt(rows.length)}</b> electores</p><table><thead><tr><th>#</th><th>DNI</th><th>Apellido y nombre</th><th>Domicilio</th><th>Escuela</th><th>Mesa</th><th>Orden</th><th>Teléfono</th><th>Votó</th></tr></thead><tbody>${cuerpo}</tbody></table>`);
+});
+$("rpResumen").addEventListener("click", () => {
+  const rows = filasReporte();
+  const locs = [...new Set(rows.map(e=>e.localidad_id))].map(id => S.locs.find(l=>l.id===id)).filter(Boolean);
+  const tl = locs.map(l => { const c = rows.filter(e=>e.localidad_id===l.id).length; return `<tr><td>${esc(l.nombre)}</td><td>${fmt(c)}</td><td>${fmt(l.objetivo)}</td><td>${pct(c,l.objetivo)}%</td></tr>`; }).join("");
+  const m = {}; rows.forEach(e => m[e.cargado_por] = (m[e.cargado_por]||0)+1);
+  const tr = Object.entries(m).sort((a,b)=>b[1]-a[1]).map(([u,c]) => `<tr><td>${esc(perfNombre(u))}</td><td>${fmt(c)}</td></tr>`).join("");
+  const me = {}; rows.forEach(e => { const k = `${locNombre(e.localidad_id)} · ${e.escuela||"Sin escuela"}`; me[k]=(me[k]||0)+1; });
+  const te = Object.entries(me).sort((a,b)=>a[0].localeCompare(b[0],"es",{numeric:true})).map(([k,c]) => `<tr><td>${esc(k)}</td><td>${fmt(c)}</td></tr>`).join("");
+  imprimir(encabezado("Resumen de avance", filtrosTexto()) +
+    `<h3>Por localidad</h3><table><tr><th>Localidad</th><th>Cargados</th><th>Objetivo</th><th>Cumplimiento</th></tr>${tl}</table>
+     <h3>Por referente</h3><table><tr><th>Referente</th><th>Cargados</th></tr>${tr}</table>
+     <h3>Por escuela</h3><table><tr><th>Escuela</th><th>Cargados</th></tr>${te}</table>`);
+});
+$("rpCsv").addEventListener("click", () => {
+  const rows = filasReporte(); if (!rows.length) return setMsg("rpMsg","No hay electores con esos filtros.","warn");
+  descargarCsv(rows, `listado-${new Date().toISOString().slice(0,10)}.csv`); setMsg("rpMsg", `Descargado: ${fmt(rows.length)} electores.`, "ok");
+});
+
+function renderObjetivos(){
+  $("tablaObj").innerHTML = `<table><tr><th>Localidad</th><th class="n">Objetivo</th></tr>${S.locs.map(l => `<tr><td>${esc(l.nombre)}</td><td class="n"><input type="number" min="0" value="${l.objetivo||0}" data-obj="${l.id}" style="max-width:120px;text-align:right"></td></tr>`).join("")}</table>`;
+}
+$("tablaObj").addEventListener("change", async e => {
+  const i = e.target.closest("[data-obj]"); if (!i) return;
+  const v = Math.max(0, parseInt(i.value,10)||0);
+  try { await api.guardarLocalidad(+i.dataset.obj, {objetivo:v}); S.locs.find(l=>l.id===+i.dataset.obj).objetivo = v; setMsg("objMsg","Objetivo guardado.","ok"); }
+  catch(_){ setMsg("objMsg","No se pudo guardar.","err"); }
+});
+$("btnAddLoc").addEventListener("click", async () => {
+  const n = $("nuevaLoc").value.trim(); if (!n) return;
+  try { await api.agregarLocalidad(n); $("nuevaLoc").value=""; S.locs = await api.localidades(); renderObjetivos(); setMsg("objMsg","Localidad agregada.","ok"); }
+  catch(_){ setMsg("objMsg","No se pudo agregar (¿ya existe?).","err"); }
+});
+
+function renderUsuarios(){
+  const opt = (sel, items) => items.map(([v,t]) => `<option value="${v}" ${String(sel??"")===String(v)?"selected":""}>${esc(t)}</option>`).join("");
+  $("tablaUsr").innerHTML = S.perfiles.map(p => `<div class="list-item" data-u="${p.id}" style="display:block">
+    <div class="muted">${esc(p.email||"")} ${p.rol?"":'<span class="chip sin">sin habilitar</span>'}</div>
+    <input data-f="nombre" value="${esc(p.nombre||"")}" placeholder="Nombre y apellido" style="margin-top:4px">
+    <div class="row" style="margin-top:8px"><select data-f="rol">${opt(p.rol, [["","— sin rol —"],...Object.entries(ROLES)])}</select>
+    <select data-f="localidad_id">${opt(p.localidad_id, [["","— localidad —"],...S.locs.map(l=>[l.id,l.nombre])])}</select></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px"><label style="display:flex;gap:8px;align-items:center;margin:0"><input type="checkbox" data-f="activo" ${p.activo?"checked":""} style="width:auto"> Activo</label>
+    <button class="btn sm sec" type="button" data-clave="${p.id}">Cambiar contraseña</button></div></div>`).join("");
+  // selects del formulario nuevo
+  const rc = $("nuRol").value, lc = $("nuLoc").value;
+  $("nuRol").innerHTML = Object.entries(ROLES).map(([v,t]) => `<option value="${v}">${esc(t)}</option>`).join("");
+  $("nuLoc").innerHTML = '<option value="">— elegir —</option>' + S.locs.map(l => `<option value="${l.id}">${esc(l.nombre)}</option>`).join("");
+  if (rc) $("nuRol").value = rc; else $("nuRol").value = "ref_territorial"; if (lc) $("nuLoc").value = lc;
+}
+$("tablaUsr").addEventListener("change", async e => {
+  const f = e.target.dataset.f, tr = e.target.closest("[data-u]"); if (!f || !tr) return;
+  let v = e.target.type === "checkbox" ? e.target.checked : e.target.value;
+  if (f === "rol" || f === "localidad_id") v = v === "" ? null : (f === "localidad_id" ? +v : v);
+  try { await api.guardarPerfil(tr.dataset.u, {[f]: v}); Object.assign(S.perfiles.find(p=>p.id===tr.dataset.u), {[f]: v}); setMsg("usrMsg","Cambios guardados.","ok"); }
+  catch(_){ setMsg("usrMsg","No se pudo guardar.","err"); }
+});
+
+// ---------- crear usuarios / cambiar contraseña ----------
+function claveAleatoria(){ const a = "abcdefghjkmnpqrstuvwxyz23456789"; let c = ""; const r = crypto.getRandomValues(new Uint32Array(8)); r.forEach(n => c += a[n % a.length]); return "FN" + c; }
+const ERR_USR = m => /MAIL_EXISTE/.test(m) ? "Ya existe un usuario con ese mail." : /MAIL_INVALIDO/.test(m) ? "El mail no es válido." :
+  /CLAVE_CORTA/.test(m) ? "La contraseña debe tener al menos 8 caracteres." : /FALTA_LOCALIDAD/.test(m) ? "Elegí la localidad." :
+  /Could not find the function|crear_usuario|cambiar_clave/.test(m) ? "Falta habilitar esta función en Supabase (correr usuarios.sql)." : "No se pudo: " + m;
+$("nuGenerar").addEventListener("click", () => { $("nuClave").value = claveAleatoria(); });
+$("nuRol").addEventListener("change", () => { $("nuLoc").required = $("nuRol").value !== "operario"; });
+$("nuForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const u = { nombre: $("nuNombre").value.trim(), email: $("nuMail").value.trim().toLowerCase(), clave: $("nuClave").value, rol: $("nuRol").value, localidad_id: $("nuLoc").value ? +$("nuLoc").value : null };
+  if (u.rol !== "operario" && !u.localidad_id) return setMsg("nuMsg","Elegí la localidad.","err");
+  if (u.clave.length < 8) return setMsg("nuMsg","La contraseña debe tener al menos 8 caracteres.","err");
+  $("nuBtn").disabled = true; setMsg("nuMsg","Creando usuario…");
+  try {
+    await api.crearUsuario(u);
+    setMsg("nuMsg","✓ Usuario creado.","ok");
+    const link = location.origin + location.pathname;
+    const texto = `Hola ${u.nombre}! Ya tenés tu usuario de Cómputos FNyF.\nEntrá a: ${link}\nUsuario: ${u.email}\nContraseña: ${u.clave}\nTipo: ${ROLES[u.rol]}${u.localidad_id ? " · " + locNombre(u.localidad_id) : ""}\nNo compartas tus datos con nadie.`;
+    const d = $("nuDatos"); d.classList.remove("hidden");
+    d.innerHTML = `<b>Datos para enviarle a ${esc(u.nombre)}:</b><pre style="white-space:pre-wrap;font:inherit;margin:8px 0">${esc(texto)}</pre>
+      <div class="acciones" style="margin-top:6px"><button class="btn sm" type="button" id="nuCopiar">Copiar</button><a class="btn sm sec" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(texto)}">Enviar por WhatsApp</a></div>`;
+    $("nuCopiar").onclick = () => navigator.clipboard.writeText(texto).then(() => setMsg("nuMsg","Datos copiados.","ok"), () => setMsg("nuMsg","No se pudo copiar: seleccioná el texto a mano.","warn"));
+    ["nuNombre","nuMail","nuClave"].forEach(i => $(i).value = "");
+    S.perfiles = await api.perfiles(); renderUsuarios();
+  } catch(err){ setMsg("nuMsg", ERR_USR(String(err?.message || err)), "err"); }
+  finally { $("nuBtn").disabled = false; }
+});
+$("tablaUsr").addEventListener("click", async e => {
+  const b = e.target.closest("[data-clave]"); if (!b) return;
+  const p = S.perfiles.find(x => x.id === b.dataset.clave);
+  const nueva = claveAleatoria();
+  $("dlgTxt").innerHTML = `<b>Nueva contraseña para ${esc(p?.nombre || p?.email || "")}</b><label for="dlgClave">Contraseña (mínimo 8)</label><input id="dlgClave" value="${nueva}">`;
+  if (!(await ask(null))) return;
+  const c = $("dlgClave").value;
+  try { await api.cambiarClave(p.id, c); setMsg("usrMsg", `✓ Contraseña cambiada. Nueva: ${c}`, "ok"); }
+  catch(err){ setMsg("usrMsg", ERR_USR(String(err?.message || err)), "err"); }
+});
+
+// =====================================================================
+// CARGA POR DNI (vista previa del padrón)
+// =====================================================================
+const soloNum = v => v.replace(/\D/g,"");
+let fichaActual = null;
+$("eDni").addEventListener("input", () => { $("eDni").value = soloNum($("eDni").value); setMsg("dniMsg",""); $("ficha").classList.add("hidden"); fichaActual = null; });
+
+const ESTADOS = {
+  ok:             ["ok",  ""],
+  ya_cargado:     ["ya",  "⚠ Este elector ya fue cargado."],
+  otra_localidad: ["mal", "✕ Vota en otra localidad: no lo podés cargar."],
+  sin_localidad:  ["mal", "✕ La localidad del padrón no está dada de alta. Avisá al equipo de Cómputos."],
+  no_padron:      ["mal", "✕ Este DNI no figura en el padrón."]
+};
+
+$("formDni").addEventListener("submit", async e => {
+  e.preventDefault();
+  const dni = $("eDni").value;
+  if (!/^\d{6,9}$/.test(dni)) return setMsg("dniMsg","El DNI debe tener entre 6 y 9 números.","err");
+  setMsg("dniMsg","Buscando en el padrón…"); $("ficha").classList.add("hidden");
+  let p;
+  try { p = await api.buscarPadron(dni); } catch(_){ return setMsg("dniMsg","No se pudo consultar. Revisá la conexión.","err"); }
+  setMsg("dniMsg","");
+  if (!p) return setMsg("dniMsg","No se pudo consultar.","err");
+  fichaActual = p;
+  const [cls, txt] = ESTADOS[p.estado] || ESTADOS.no_padron;
+  const f = $("ficha"); f.className = "ficha f-" + cls;
+  if (p.estado === "no_padron"){ f.innerHTML = `<h3>DNI ${esc(dni)}</h3><div class="estado err">${txt}</div>`; return; }
+  const dato = (t,v) => `<div><span>${t}</span><b>${esc(v || "—")}</b></div>`;
+  f.innerHTML = `<h3>${esc(p.apellido)}, ${esc(p.nombre)}</h3><div class="muted">DNI ${esc(p.dni)}</div>
+    <div class="grid">${dato("Clase",p.clase)}${dato("Sexo",p.sexo)}${dato("Domicilio",p.domicilio)}${dato("Localidad",p.localidad)}${dato("Circuito",p.circuito)}${dato("Escuela",p.escuela)}${dato("Mesa",p.mesa)}${dato("N° de orden",p.orden)}</div>
+    ${txt ? `<div class="estado ${cls==="ya"?"warn":"err"}">${txt}</div>` : `
+      <label for="eTel">Teléfono (opcional)</label><input id="eTel" inputmode="tel" placeholder="Ej: 299 512 3456">
+      <button class="btn full" id="btnConfirmar" type="button">✓ Confirmar: nos acompaña</button>
+      <button class="btn sec full" id="btnOtro" type="button">Cancelar</button>`}`;
+  if (p.estado === "ok"){
+    $("btnConfirmar").onclick = confirmar;
+    $("btnOtro").onclick = () => { $("eDni").value=""; f.classList.add("hidden"); $("eDni").focus(); };
+  }
+});
+
+async function confirmar(){
+  const p = fichaActual; if (!p) return;
+  const btn = $("btnConfirmar"); btn.disabled = true;
+  try {
+    await api.insertar({dni: p.dni, telefono: $("eTel").value.trim() || null});
+    $("ficha").classList.add("hidden"); $("eDni").value = "";
+    setMsg("dniMsg", `✓ ${p.apellido}, ${p.nombre} cargado.`, "ok");
+    $("eDni").focus(); fichaActual = null;
+    await cargarTodo(); render();
+  } catch(err){
+    const m = String(err?.message || "");
+    btn.disabled = false;
+    setMsg("dniMsg",
+      err?.code === "23505" ? "Ese DNI ya fue cargado." :
+      err?.code === "42501" ? "Ese elector vota en otra localidad." :
+      m.includes("NO_PADRON") ? "Ese DNI no figura en el padrón." :
+      m.includes("SIN_LOCALIDAD") ? "La localidad del padrón no está dada de alta." :
+      "No se pudo guardar. Revisá la conexión.", "err");
+  }
+}
+
+$("lista").addEventListener("click", async e => {
+  const ed = e.target.closest("[data-ed]"), del = e.target.closest("[data-del]");
+  if (ed){
+    const x = S.electores.find(r => r.id === +ed.dataset.ed); if (!x) return;
+    $("dlgTxt").innerHTML = `<b>${esc(x.apellido)}, ${esc(x.nombre)}</b><label for="dlgTel">Teléfono</label><input id="dlgTel" inputmode="tel" value="${esc(x.telefono||"")}">`;
+    const ok = await ask(null);
+    if (!ok) return;
+    try { await api.actualizar(x.id, {telefono: $("dlgTel").value.trim() || null}); await cargarTodo(); render(); }
+    catch(_){ setMsg("cuenta","No se pudo guardar el teléfono.","err"); }
+  }
+  if (del){
+    const x = S.electores.find(r => r.id === +del.dataset.del);
+    if (!x || !(await ask(`¿Quitar a ${x.apellido}, ${x.nombre} (DNI ${x.dni}) de los electores que nos acompañan?`))) return;
+    try { await api.borrar(x.id); await cargarTodo(); render(); } catch(_){ setMsg("cuenta","No se pudo borrar.","err"); }
+  }
+});
+
+// =====================================================================
+// FISCAL (día de la elección)
+// =====================================================================
+const store = { get(k, d){ try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch(_){ return d; } }, set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(_){} } };
+const F = { mesa: null, info: null, cola: store.get("fiscal_cola", []) };
+
+async function renderFiscal(){
+  const guardada = store.get("fiscal_mesa", null);
+  if (guardada && !F.mesa) await elegirMesa(guardada, true);
+  else if (F.mesa) actualizarFiscal();
+}
+async function elegirMesa(m, silencioso){
+  setMsg("fMesaMsg", silencioso ? "" : "Buscando mesa…");
+  let info; try { info = await api.mesaInfo(m); } catch(_){ return setMsg("fMesaMsg","No se pudo consultar. Revisá la conexión.","err"); }
+  if (!info || info.estado === "no_existe") return setMsg("fMesaMsg", `La mesa ${m} no figura en el padrón.`, "err");
+  if (info.estado === "otra_localidad") return setMsg("fMesaMsg", `La mesa ${m} es de ${info.localidad}: no corresponde a tu localidad.`, "err");
+  F.mesa = m; F.info = info; store.set("fiscal_mesa", m); setMsg("fMesaMsg","");
+  $("fMesaForm").classList.add("hidden"); $("fCarga").classList.remove("hidden");
+  $("fMesaN").textContent = m; $("fMesaDesc").textContent = `${info.escuela || ""} · ${info.localidad || ""}`;
+  actualizarFiscal(); $("fOrden").focus();
+}
+$("fMesaForm").addEventListener("submit", e => { e.preventDefault(); const m = soloNum($("fMesa").value); if (m) elegirMesa(m); });
+$("fMesa").addEventListener("input", () => $("fMesa").value = soloNum($("fMesa").value));
+$("fOrden").addEventListener("input", () => $("fOrden").value = soloNum($("fOrden").value));
+$("fCambiar").addEventListener("click", async () => {
+  if (F.cola.length && !(await ask(`Hay ${F.cola.length} votos sin enviar. Se van a enviar igual cuando vuelva la conexión. ¿Cambiar de mesa?`))) return;
+  F.mesa = null; store.set("fiscal_mesa", null); $("fCarga").classList.add("hidden"); $("fMesaForm").classList.remove("hidden"); $("fMesa").value = ""; $("fMesa").focus();
+});
+
+async function actualizarFiscal(){
+  if (!F.mesa) return;
+  try {
+    const [info, ult] = await Promise.all([api.mesaInfo(F.mesa), api.votosMesa(F.mesa)]);
+    F.info = info;
+    const v = (info.votaron || 0), t = info.electores || 0;
+    $("fCont").textContent = fmt(v); $("fContTxt").textContent = `votaron de ${fmt(t)} electores de la mesa (${pct(v,t)}%)`;
+    $("fBar").style.width = Math.min(100, pct(v,t)) + "%";
+    $("fUlt").innerHTML = ult.length ? ult.slice(0,10).map(x => `<div class="list-item"><div class="who"><b>Orden ${esc(x.orden)} · ${esc(x.apellido)}, ${esc(x.nombre)}</b><span>${new Date(x.hora).toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",hour12:false})}</span></div>${x.propio?`<button class="btn sm danger" data-desh="${esc(x.orden)}">Deshacer</button>`:""}</div>`).join("") : '<p class="muted">Todavía no registraste votos en esta mesa.</p>';
+  } catch(_){}
+  mostrarCola();
+}
+function resultado(cls, txt){ const r = $("fRes"); r.className = "resultado r-" + cls; r.textContent = txt; }
+$("fVotoForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const o = $("fOrden").value; if (!o || !F.mesa) return;
+  $("fOrden").value = ""; $("fOrden").focus();
+  try {
+    const r = await api.registrarVoto(F.mesa, o);
+    if (!r) throw new Error("sin respuesta");
+    if (r.estado === "ok") resultado("ok", `✓ Orden ${r.orden} · ${r.apellido}, ${r.nombre}`);
+    else if (r.estado === "ya_registrado") resultado("ya", `Orden ${r.orden} (${r.apellido}) ya estaba registrado.`);
+    else if (r.estado === "no_existe") resultado("mal", `✕ No existe el orden ${o} en la mesa ${F.mesa}.`);
+    else resultado("mal", "✕ No tenés permiso para esta mesa.");
+    actualizarFiscal();
+  } catch(_){
+    F.cola.push({mesa: F.mesa, orden: o}); store.set("fiscal_cola", F.cola);
+    resultado("ya", `Sin conexión: orden ${o} guardado. Se envía solo cuando vuelva la señal.`); mostrarCola();
+  }
+});
+$("fUlt").addEventListener("click", async e => {
+  const b = e.target.closest("[data-desh]"); if (!b) return;
+  if (!(await ask(`¿Deshacer el registro del orden ${b.dataset.desh}?`))) return;
+  try { await api.deshacerVoto(F.mesa, b.dataset.desh); resultado("ya", `Se deshizo el orden ${b.dataset.desh}.`); actualizarFiscal(); } catch(_){ resultado("mal","No se pudo deshacer. Revisá la conexión."); }
+});
+function mostrarCola(){ const p = $("fPend"); p.classList.toggle("hidden", !F.cola.length); p.textContent = `⏳ ${F.cola.length} voto(s) pendientes de enviar (sin conexión). Se reintenta solo.`; }
+async function enviarCola(){
+  if (!F.cola.length) return;
+  const resto = [];
+  for (const x of F.cola){ try { await api.registrarVoto(x.mesa, x.orden); } catch(_){ resto.push(x); } }
+  F.cola = resto; store.set("fiscal_cola", F.cola); mostrarCola(); if (!resto.length) actualizarFiscal();
+}
+setInterval(enviarCola, 15000); window.addEventListener("online", enviarCola);
+
+// =====================================================================
+// SEGUIMIENTO DEL DÍA DE LA ELECCIÓN (operarios / ref. de localidad)
+// =====================================================================
+const EL = { mesas: [], votados: new Map(), timer: null };
+async function cargarEleccion(){
+  clearTimeout(EL.timer);
+  try {
+    const [mesas, cv] = await Promise.all([api.eleccionMesas(), api.compromisosVotaron()]);
+    EL.mesas = mesas; EL.votados = new Map(cv.map(x => [x.dni, x.hora]));
+    $("elAct").textContent = "Actualizado " + new Date().toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",hour12:false}) + " · se actualiza solo cada minuto";
+  } catch(_){ $("elAct").textContent = "No se pudo actualizar. Revisá la conexión."; }
+  renderEleccion();
+  EL.timer = setTimeout(() => { if (S.vista === "eleccion") cargarEleccion(); }, 60000);
+}
+$("elRefrescar").addEventListener("click", cargarEleccion);
+
+function renderEleccion(){
+  const rol = S.perfil.rol, E = S.electores, V = EL.votados;
+  const votaron = E.filter(e => V.has(e.dni)).length;
+  const reportando = EL.mesas.filter(m => m.votaron > 0).length;
+  const regs = EL.mesas.reduce((a,m)=>a+m.votaron,0), padM = EL.mesas.filter(m=>m.votaron>0).reduce((a,m)=>a+m.padron,0);
+  $("elKpis").innerHTML = [[`${pct(votaron,E.length)}%`,"Compromisos que ya votaron"],[fmt(votaron),"Ya votaron"],[fmt(E.length-votaron),"Faltan votar"],
+    [`${fmt(reportando)} / ${fmt(EL.mesas.length)}`,"Mesas con fiscal cargando"],[fmt(regs),"Votos registrados por fiscales"],[`${pct(regs,padM)}%`,"Participación en mesas fiscalizadas"]]
+    .map(([a,b]) => `<div class="kpi"><b>${a}</b><span>${b}</span></div>`).join("");
+  const locs = rol === "operario" ? S.locs : S.locs.filter(l => l.id === S.perfil.localidad_id);
+  const items = (locs.length > 1 ? [{nombre:"TOTAL", c:votaron, t:E.length}] : []).concat(locs.map(l => { const el = E.filter(e => e.localidad_id === l.id); return {nombre:l.nombre, c:el.filter(e=>V.has(e.dni)).length, t:el.length}; }).filter(x => x.t));
+  $("elTortas").innerHTML = items.map(x => `<div class="donut">${donut(x.c, x.t)}<b>${esc(x.nombre)}</b><span>${fmt(x.c)} de ${fmt(x.t)} · faltan ${fmt(x.t-x.c)}</span></div>`).join("") || '<p class="muted">Sin compromisos cargados.</p>';
+  // por hora (8 a 18)
+  const horas = []; for (let h = 8; h <= 18; h++) horas.push({t: `${h}`, v: 0});
+  V.forEach(hora => { const h = new Date(hora).getHours(); const i = h - 8; if (i >= 0 && i < horas.length) horas[i].v++; });
+  $("elHora").innerHTML = grafHoras(horas);
+  // filtros faltantes
+  const sel = (id, opts, todos) => { const c = $(id).value; $(id).innerHTML = (todos?`<option value="">${todos}</option>`:"") + opts.map(([v,t]) => `<option value="${esc(v)}">${esc(t)}</option>`).join(""); if ([...$(id).options].some(o=>o.value===c)) $(id).value = c; };
+  sel("elLoc", locs.map(l => [l.id, l.nombre]), rol === "operario" ? "Todas" : null);
+  sel("elRef", [...new Set(E.map(e => e.cargado_por))].map(u => [u, perfNombre(u)]), "Todos");
+  sel("elEsc", [...new Set(E.map(e => e.escuela).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es",{numeric:true})).map(x => [x,x]), "Todas");
+  contarFaltantes();
+  // tabla por mesa
+  const fl = $("elLoc").value;
+  const ms = EL.mesas.filter(m => !fl || String(m.localidad_id) === fl).filter(m => m.compromisos > 0 || m.votaron > 0)
+    .sort((a,b) => (b.compromisos-b.compromisos_votaron) - (a.compromisos-a.compromisos_votaron));
+  $("elMesas").innerHTML = ms.length ? `<table><tr><th>Escuela</th><th>Mesa</th><th class="n">Votaron</th><th class="n">Compromisos</th><th class="n">Faltan</th><th>Últ. carga</th></tr>${ms.slice(0,30).map(m =>
+    `<tr><td>${esc(m.escuela||"")}</td><td>${esc(m.mesa)}</td><td class="n">${fmt(m.votaron)}/${fmt(m.padron)} <span class="muted">${pct(m.votaron,m.padron)}%</span></td><td class="n">${fmt(m.compromisos_votaron)}/${fmt(m.compromisos)}</td><td class="n"><b>${fmt(m.compromisos-m.compromisos_votaron)}</b></td><td>${m.ultimo ? new Date(m.ultimo).toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",hour12:false}) : '<span class="chip sin">sin fiscal</span>'}</td></tr>`).join("")}</table>${ms.length>30?`<p class="muted">Se muestran las 30 mesas con más faltantes de ${fmt(ms.length)}. Usá "Imprimir estado por mesa" para verlas todas.</p>`:""}` : '<p class="muted">Todavía no hay datos de mesas. Se necesita el padrón importado.</p>';
+}
+function grafHoras(datos){
+  const W = 600, H = 160, pad = 22, max = Math.max(1, ...datos.map(d=>d.v)), bw = (W-pad)/datos.length;
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto"><line x1="${pad}" x2="${W}" y1="${H-18}" y2="${H-18}" stroke="var(--line)"/><text x="0" y="12">${fmt(max)}</text>` +
+    datos.map((d,i) => { const h = (H-30)*d.v/max; return `<g><rect x="${pad+i*bw}" y="0" width="${bw}" height="${H}" fill="transparent"><title>${d.t} a ${+d.t+1} h: ${fmt(d.v)} compromisos votaron</title></rect><rect x="${pad+i*bw+3}" y="${H-18-h}" width="${bw-6}" height="${h}" rx="4" fill="var(--azul)" pointer-events="none"/><text x="${pad+i*bw+bw/2}" y="${H-4}" text-anchor="middle">${d.t}h</text></g>`; }).join("") + `</svg>`;
+}
+function faltantes(){
+  const l = $("elLoc").value, u = $("elRef").value, es = $("elEsc").value, agr = $("elAgr").value;
+  const c = (a,b) => String(a??"").localeCompare(String(b??""), "es", {numeric:true});
+  return S.electores.filter(e => !EL.votados.has(e.dni) && (!l || String(e.localidad_id)===l) && (!u || e.cargado_por===u) && (!es || e.escuela===es))
+    .sort(agr === "referente" ? (a,b) => c(perfNombre(a.cargado_por),perfNombre(b.cargado_por)) || c(a.escuela,b.escuela) || c(a.mesa,b.mesa) || c(a.orden,b.orden)
+                              : (a,b) => c(a.escuela,b.escuela) || c(a.mesa,b.mesa) || c(a.orden,b.orden));
+}
+function contarFaltantes(){ $("elCuenta").textContent = `${fmt(faltantes().length)} compromisos todavía no votaron con estos filtros.`; }
+["elLoc","elRef","elEsc","elAgr"].forEach(id => $(id).addEventListener("change", () => { contarFaltantes(); if (id === "elLoc") renderEleccion(); }));
+$("elImprimir").addEventListener("click", () => {
+  const rows = faltantes(); if (!rows.length) return setMsg("elMsg","No hay faltantes con esos filtros. 🎉","ok");
+  const agr = $("elAgr").value; let ult = null, n = 0, cuerpo = "";
+  rows.forEach(e => { const g = agr === "referente" ? "Referente: " + perfNombre(e.cargado_por) : `${e.escuela||"Sin escuela"} · Mesa ${e.mesa||"—"}`;
+    if (g !== ult){ if (ult !== null) n = 0; cuerpo += `<tr class="grupo"><td colspan="8">${esc(g)}</td></tr>`; ult = g; }
+    cuerpo += `<tr><td>${++n}</td><td>${esc(e.dni)}</td><td>${esc(e.apellido)}, ${esc(e.nombre)}</td><td>${esc(e.domicilio||"")}</td><td>${esc(e.telefono||"")}</td><td>${esc(e.escuela||"")}</td><td>${esc(e.mesa||"")}</td><td>${esc(e.orden||"")}</td></tr>`; });
+  const opt = id => $(id).value ? $(id).selectedOptions[0].text : null;
+  imprimir(encabezado("Compromisos que todavía no votaron", [opt("elLoc"), opt("elRef") && "Referente: "+opt("elRef"), opt("elEsc")].filter(Boolean).join(" · ") || "Todos") +
+    `<p><b>${fmt(rows.length)}</b> faltantes · corte ${new Date().toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",hour12:false})} h</p><table><thead><tr><th>#</th><th>DNI</th><th>Apellido y nombre</th><th>Domicilio</th><th>Teléfono</th><th>Escuela</th><th>Mesa</th><th>Orden</th></tr></thead><tbody>${cuerpo}</tbody></table>`);
+});
+$("elCsv").addEventListener("click", () => { const rows = faltantes(); if (!rows.length) return setMsg("elMsg","No hay faltantes con esos filtros.","ok"); descargarCsv(rows, `faltantes-${new Date().toISOString().slice(0,16).replace(":","")}.csv`); setMsg("elMsg", `Descargado: ${fmt(rows.length)} faltantes.`, "ok"); });
+$("elImpMesas").addEventListener("click", () => {
+  const ms = EL.mesas.filter(m => m.compromisos > 0 || m.votaron > 0);
+  imprimir(encabezado("Estado por mesa", "Día de la elección · corte " + new Date().toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",hour12:false}) + " h") +
+    `<table><thead><tr><th>Localidad</th><th>Escuela</th><th>Mesa</th><th>Votaron</th><th>Padrón</th><th>%</th><th>Compromisos</th><th>Ya votaron</th><th>Faltan</th></tr></thead><tbody>${ms.map(m => `<tr><td>${esc(locNombre(m.localidad_id))}</td><td>${esc(m.escuela||"")}</td><td>${esc(m.mesa)}</td><td>${fmt(m.votaron)}</td><td>${fmt(m.padron)}</td><td>${pct(m.votaron,m.padron)}%</td><td>${fmt(m.compromisos)}</td><td>${fmt(m.compromisos_votaron)}</td><td><b>${fmt(m.compromisos-m.compromisos_votaron)}</b></td></tr>`).join("")}</tbody></table>`);
+});
+
+// =====================================================================
+// IMPORTAR PADRÓN (solo operarios)
+// =====================================================================
+const CAMPOS = [["dni","DNI / Matrícula *",/dni|documento|matr/],["apellido","Apellido",/apell/],["nombre","Nombre",/^nombre|nombres/],
+  ["clase","Clase / Año",/clase|a[ñn]o|nac/],["sexo","Sexo / Género",/sexo|g[eé]nero/],["domicilio","Domicilio",/domic|direcc|calle/],
+  ["localidad","Localidad",/localidad|ciudad|municip/],["circuito","Circuito",/circuito|secci/],["escuela","Escuela",/escuela|establec|colegio/],
+  ["mesa","Mesa",/mesa/],["orden","N° de orden",/orden|nro/]];
+let filasArchivo = [], columnas = [];
+
+async function renderPadron(){
+  try { const n = await api.padronCount(); $("padronInfo").textContent = n ? `El padrón tiene ${fmt(n)} electores cargados. Podés importar otro archivo para actualizarlo (los DNI repetidos se actualizan).` : "Todavía no hay padrón cargado. Importalo para que los referentes puedan empezar a cargar por DNI."; }
+  catch(_){ $("padronInfo").textContent = "No se pudo leer el padrón."; }
+}
+
+$("archivo").addEventListener("change", async e => {
+  const file = e.target.files[0]; if (!file) return;
+  setMsg("impMsg","Leyendo archivo…"); $("mapeo").classList.add("hidden");
+  try {
+    const XLSX = await import("https://cdn.jsdelivr.net/npm/xlsx@0.18.5/+esm");
+    const wb = XLSX.read(await file.arrayBuffer(), {type:"array", raw:false});
+    const hoja = wb.Sheets[wb.SheetNames[0]];
+    filasArchivo = XLSX.utils.sheet_to_json(hoja, {defval:"", raw:false});
+    columnas = filasArchivo.length ? Object.keys(filasArchivo[0]) : [];
+    if (!columnas.length) return setMsg("impMsg","El archivo está vacío o no tiene encabezados.","err");
+    const adiv = c => { const k = columnas.find(col => c[2].test(col.toLowerCase())); return k || ""; };
+    $("mapaCampos").innerHTML = CAMPOS.map(c => `<div><label>${c[1]}</label><select data-campo="${c[0]}"><option value="">— no tiene —</option>${columnas.map(col => `<option ${adiv(c)===col?"selected":""}>${esc(col)}</option>`).join("")}</select></div>`).join("");
+    $("muestra").innerHTML = `<p class="muted">${fmt(filasArchivo.length)} filas. Primeras 3:</p><table><tr>${columnas.map(c=>`<th>${esc(c)}</th>`).join("")}</tr>${filasArchivo.slice(0,3).map(r=>`<tr>${columnas.map(c=>`<td>${esc(r[c])}</td>`).join("")}</tr>`).join("")}</table>`;
+    $("mapeo").classList.remove("hidden"); setMsg("impMsg","");
+  } catch(_){ setMsg("impMsg","No se pudo leer el archivo. Probá guardarlo como Excel (.xlsx) o CSV.","err"); }
+});
+
+$("btnImportar").addEventListener("click", async () => {
+  const mapa = {}; document.querySelectorAll("[data-campo]").forEach(s => mapa[s.dataset.campo] = s.value);
+  if (!mapa.dni) return setMsg("impMsg","Elegí qué columna es el DNI.","err");
+  const vistos = new Set(), filas = [];
+  for (const r of filasArchivo){
+    const dni = soloNum(String(r[mapa.dni] ?? "")); if (!/^\d{6,9}$/.test(dni) || vistos.has(dni)) continue; vistos.add(dni);
+    const o = {dni}; CAMPOS.slice(1).forEach(([k]) => { o[k] = mapa[k] ? (String(r[mapa[k]] ?? "").trim() || null) : null; }); filas.push(o);
+  }
+  if (!filas.length) return setMsg("impMsg","No se encontraron DNI válidos en esa columna.","err");
+  if (!(await ask(`Se van a importar ${fmt(filas.length)} electores al padrón. ¿Continuar?`))) return;
+  const btn = $("btnImportar"); btn.disabled = true;
+  try {
+    for (let i = 0; i < filas.length; i += 1000){
+      await api.importarPadron(filas.slice(i, i+1000));
+      setMsg("impMsg", `Importando… ${fmt(Math.min(i+1000, filas.length))} de ${fmt(filas.length)}`);
+    }
+    const nuevas = await api.sincLocalidades();
+    S.locs = await api.localidades();
+    setMsg("impMsg", `✓ Padrón importado: ${fmt(filas.length)} electores.` + (nuevas ? ` Se agregaron ${nuevas} localidades nuevas (fijales el objetivo).` : ""), "ok");
+    $("mapeo").classList.add("hidden"); $("archivo").value = ""; renderPadron();
+  } catch(_){ setMsg("impMsg","Se cortó la importación. Volvé a intentar: lo ya importado no se duplica.","err"); }
+  finally { btn.disabled = false; }
+});
+
+// =====================================================================
+// COPIA DE SEGURIDAD (CSV)
+// =====================================================================
+function descargarCsv(rows, nombre){
+  const q = v => `"${String(v ?? "").replace(/"/g,'""')}"`;
+  const head = ["dni","apellido","nombre","clase","sexo","domicilio","localidad","circuito","escuela","mesa","orden","telefono","cargado_por","creado"];
+  const csv = [head.join(";"), ...rows.map(r => [r.dni,r.apellido,r.nombre,r.clase,r.sexo,r.domicilio,locNombre(r.localidad_id),r.circuito,r.escuela,r.mesa,r.orden,r.telefono,perfNombre(r.cargado_por),r.creado].map(q).join(";"))].join("\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob(["﻿"+csv], {type:"text/csv;charset=utf-8"}));
+  a.download = nombre; a.click();
+}
+$("btnBackup").addEventListener("click", async () => {
+  try { const rows = await api.electores(); descargarCsv(rows, `computos-copia-${new Date().toISOString().slice(0,10)}.csv`); setMsg("bkMsg", `Copia generada: ${fmt(rows.length)} electores.`, "ok"); }
+  catch(_){ setMsg("bkMsg","No se pudo generar la copia.","err"); }
+});
+
+// =====================================================================
+// ARRANQUE
+// =====================================================================
+if (DEMO){
+  $("demoBar").classList.remove("hidden");
+  $("demoRol").addEventListener("change", e => { api.setDemoUser(e.target.value); iniciar(); });
+}
+if ("serviceWorker" in navigator && !DEMO) navigator.serviceWorker.register("sw.js").catch(()=>{});
+iniciar();
+</script>
+</body>
+</html>
